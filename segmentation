@@ -1,0 +1,30 @@
+import pymesh
+import numpy as np
+
+def segment_mesh(mesh, threshold):
+    # Compute vertex-wise segmentation based on threshold
+    vertex_labels = np.zeros(mesh.num_vertices)
+    for i, v in enumerate(mesh.vertices):
+        if v[0] > threshold:  # Example segmentation criteria: separating by x-coordinate
+            vertex_labels[i] = 1  # Label vertices above threshold as 1, below as 0
+
+    # Generate face-wise segmentation based on vertex labels
+    face_labels = np.zeros(mesh.num_faces)
+    for i, f in enumerate(mesh.faces):
+        if np.all(vertex_labels[f]):
+            face_labels[i] = 1  # Label faces whose vertices are all above threshold as 1
+
+    return vertex_labels, face_labels
+    # def main():
+    #     # Load a 3D mesh
+    mesh = pymesh.load(r"C:\Users\Kavya\PycharmProjects\pythonProject\.venv\Lib\case7.obj")  # Use pymesh.load() to load the mesh
+
+    # Set segmentation threshold (Example: separating by x-coordinate)
+    threshold = 0.0
+
+    # Perform segmentation
+    vertex_labels, face_labels = segment_mesh(mesh, threshold)
+
+    # Export segmented mesh
+    segmented_mesh = pymesh.form_mesh(mesh.vertices, mesh.faces[np.where(face_labels)])
+    pymesh.save_mesh("case7.obj", segmented_mesh)
