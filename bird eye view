@@ -1,0 +1,60 @@
+import pydicom
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+def create_birds_eye_view(dicom_path):
+    try:
+        # Load DICOM file
+        dicom_data = pydicom.dcmread(r"C:\Users\Kavya\PycharmProjects\pythonProject\.venv\Lib\case6\case6a_001.dcm")
+
+        # Extract pixel array
+        pixel_array = dicom_data.pixel_array
+
+        # Convert pixel array to grayscale
+        grayscale_image = pixel_array.astype(float)
+
+        # Normalize pixel values to range [0, 1]
+        grayscale_image /= np.max(grayscale_image)
+
+        # Create bird's eye view by flipping the image vertically
+        birds_eye_view = np.flipud(grayscale_image)
+
+        return birds_eye_view
+
+    except PermissionError:
+        # Attempt to change file permissions
+        os.chmod(dicom_path, 0o644)  # Change permissions to read-write for owner, read-only for others
+        # Retry loading DICOM file
+        dicom_data = pydicom.dcmread(r"C:\Users\Kavya\PycharmProjects\pythonProject\.venv\Lib\case6\case6a_001.dcm")
+
+        # Extract pixel array
+        pixel_array = dicom_data.pixel_array
+
+        # Convert pixel array to grayscale
+        grayscale_image = pixel_array.astype(float)
+
+        # Normalize pixel values to range [0, 1]
+        grayscale_image /= np.max(grayscale_image)
+
+        # Create bird's eye view by flipping the image vertically
+        birds_eye_view = np.flipud(grayscale_image)
+
+        return birds_eye_view
+
+
+def visualize_image(image, title):
+    plt.imshow(image, cmap='gray')
+    plt.title(title)
+    plt.axis('off')
+    plt.show()
+
+
+if __name__ == "__main__":
+    # Path to DICOM file
+    dicom_file_path = r"C:\Users\Kavya\PycharmProjects\pythonProject\.venv\Lib\case6\case6a_001.dcm"
+
+    # Create bird's eye view
+    birds_eye_view_image = create_birds_eye_view(r"C:\Users\Kavya\PycharmProjects\pythonProject\.venv\Lib\case6\case6a_001.dcm")
+
+    # Visualize the bird's eye view image
+    visualize_image(birds_eye_view_image, 'Bird\'s Eye View of DICOM Image')
